@@ -520,10 +520,11 @@ export default class Veda {
         name: string,
         textureUrl: string,
         speed: number = 1,
-    ): Promise<void> {
+    ): Promise<HTMLVideoElement | null> {
         let texture: THREE.Texture;
         let size: THREE.Vector2;
 
+        let video = null;
         if (isVideo(textureUrl)) {
             texture = this.videoLoader.load(name, textureUrl, speed);
 
@@ -533,7 +534,7 @@ export default class Veda {
                 setTimeout(reject, 3000);
             });
 
-            const video = texture.image as HTMLVideoElement;
+            video = texture.image as HTMLVideoElement;
             size = new THREE.Vector2(video.videoWidth, video.videoHeight);
         } else if (isGif(textureUrl)) {
             texture = await this.gifLoader.load(name, textureUrl);
@@ -558,6 +559,8 @@ export default class Veda {
             type: 'v2',
             value: size,
         };
+
+        return video;
     }
 
     unloadTexture(name: string, textureUrl?: string): void {
